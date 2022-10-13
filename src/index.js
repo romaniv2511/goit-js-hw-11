@@ -95,9 +95,8 @@ const callback = async function(entries, observer) {
                 const {hits} = await imagesAPI.getImages();
                 const markup = createMarkup(hits);
                 renderMarkup(markup);
+                
                 lightbox.refresh();
-
-                // getSmoothScrollAfterLoadMore();
 
                 if (!imagesAPI.isShowLoadMore) {
                     Notify.info("We're sorry, but you've reached the end of search results.")
