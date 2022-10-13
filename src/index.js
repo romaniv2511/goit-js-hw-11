@@ -84,3 +84,4 @@ function getSmoothScrollAfterLoadMore () {
         behavior: "smooth",
     });    
 }
+
