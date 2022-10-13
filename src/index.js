@@ -47,9 +47,9 @@ const onFormSubmit = async (e) => {
         lightbox = new SimpleLightbox('.gallery a')
 
         imagesAPI.calculateTotalPages(totalHits);
-        if (imagesAPI.isShowLoadMore) {
-            refs.btnMore.classList.remove('is-hidden');
-        }
+        // if (imagesAPI.isShowLoadMore) {
+        //     refs.btnMore.classList.remove('is-hidden');
+        // }
         
     } catch (error) {
         onError(error)
