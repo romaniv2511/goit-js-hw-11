@@ -5,7 +5,7 @@ export class ImagesApiService {
         this.searchQuery = '';
         this.page = 1;
         this.totalPages = 0
-        this.perPage = 30;
+        this.perPage = 40;
     }
     async getImages() {
         const BASE_URL = 'https://pixabay.com/api';
