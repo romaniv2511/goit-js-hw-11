@@ -12,6 +12,10 @@ let lightbox = {};
 
 const imagesAPI = new ImagesApiService();
 
+
+
+// Form submit
+
 const onFormSubmit = async (e) => {
     e.preventDefault();
     imagesAPI.resetPage();
@@ -34,7 +38,11 @@ const onFormSubmit = async (e) => {
         const markup = createMarkup(hits);
         renderMarkup(markup);
 
-        Notify.success(`Hooray! We found ${totalHits} images.`)
+        Notify.success(`Hooray! We found ${totalHits} images.`);
+
+        const target = document.querySelector('.photo-card:last-child')
+        io.observe(target);
+
 
         lightbox = new SimpleLightbox('.gallery a')
 
@@ -49,21 +57,65 @@ const onFormSubmit = async (e) => {
 }
 refs.form.addEventListener('submit', onFormSubmit)
 
-const onLoadMoreClick = async () => {
-    const {hits} = await imagesAPI.getImages();
-    const markup = createMarkup(hits);
-    renderMarkup(markup);
-    lightbox.refresh();
 
-    getSmoothScrollAfterLoadMore();
 
-    if (!imagesAPI.isShowLoadMore) {
-        refs.btnMore.classList.add('is-hidden');
-        Notify.info("We're sorry, but you've reached the end of search results.")
-    }
+// Button Load More
 
+// const onLoadMoreClick = async () => {
+//     const {hits} = await imagesAPI.getImages();
+//     const markup = createMarkup(hits);
+//     renderMarkup(markup);
+//     lightbox.refresh();
+
+//     getSmoothScrollAfterLoadMore();
+
+//     if (!imagesAPI.isShowLoadMore) {
+//         refs.btnMore.classList.add('is-hidden');
+//         Notify.info("We're sorry, but you've reached the end of search results.")
+//     }
+
+// }
+// refs.btnMore.addEventListener('click', onLoadMoreClick);
+
+
+
+// Infinite scrolling
+
+const options = {
+    root: null,
+    rootMargin: '100px',
+    threshold: 1.0
 }
-refs.btnMore.addEventListener('click', onLoadMoreClick);
+const callback = async function(entries, observer) {
+    entries.forEach(async entry => {
+        if (entry.isIntersecting) {
+            io.unobserve(entry.target);
+
+            try {
+                const {hits} = await imagesAPI.getImages();
+                const markup = createMarkup(hits);
+                renderMarkup(markup);
+                lightbox.refresh();
+
+                // getSmoothScrollAfterLoadMore();
+
+                if (!imagesAPI.isShowLoadMore) {
+                    Notify.info("We're sorry, but you've reached the end of search results.")
+                    return;
+                }
+                const target = document.querySelector('.photo-card:last-child')
+                io.observe(target);
+            } catch (error) {
+                onError(error)
+            }
+
+            
+            
+        }
+    });
+};
+const io = new IntersectionObserver(callback, options);
+
 
 
 function renderMarkup(markup) {
